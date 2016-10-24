@@ -8,18 +8,17 @@
 .EXAMPLE
    Another example of how to use this cmdlet
 #>
-function Get-LiveHosts
+function Get-LiveHosts -net
+  Param
+    (
+        # Enter network as xx.xx.xx.
+        [Parameter(Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$true,
+                   Position=0)]
+        $net 
+        )
 {
-
-    Begin
-    {$subnet = read-host "enter subnet to scan format '172.16.100.x'"
-    }
-    Process
-    {for ($i=1; $i -le 255; $i++) {
-    ping -n 1 -w 250 $subnet$i | select-string Packets:
-    nslookup $subnet$i}
-    }
-    End
-    {
-    }
+foreach ($i in 1..255) {
+test-connection -computername $net.$i -count 1 -erroraction silentlycontinue
+}
 }
